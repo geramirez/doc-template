@@ -1,1 +1,1 @@
-## Simple Google Go (golang) library for building templates for word.
+## Simple Google Go (golang) library for building templates for generic content

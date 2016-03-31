@@ -21,12 +21,13 @@ var readDocTests = []docxTest{
 	{fixture: "fixtures/test.docx", content: "This is a test document", err: nil},
 }
 
-func TestReadDocxFile(t *testing.T) {
+func TestReadFile(t *testing.T) {
 	for _, example := range readDocTests {
-		actualData, actualErr := ReadDocxFile(example.fixture)
+		actualDoc := new(Docx)
+		actualErr := actualDoc.ReadFile(example.fixture)
 		assert.Equal(t, example.err, actualErr)
 		if actualErr == nil {
-			assert.Contains(t, *(actualData.content), example.content)
+			assert.Contains(t, actualDoc.content, example.content)
 		}
 	}
 }
@@ -40,14 +41,16 @@ func TestWriteToFile(t *testing.T) {
 	for _, example := range writeDocTests {
 		exportTempDir, _ := ioutil.TempDir("", "exports")
 		// Overwrite content
-		data, _ := ReadDocxFile(example.fixture)
-		newstring := strings.Replace(*(data.content), "This is a test document", example.content, -1)
-		data.content = &newstring
+		actualDoc := new(Docx)
+		actualDoc.ReadFile(example.fixture)
+		currentContent := actualDoc.GetContent()
+		actualDoc.UpdateConent(strings.Replace(currentContent, "This is a test document", example.content, -1))
 		newFilePath := filepath.Join(exportTempDir, "test.docx")
-		data.WriteToFile(newFilePath)
+		actualDoc.WriteToFile(newFilePath)
 		// Check content
-		actualData, _ := ReadDocxFile(newFilePath)
-		assert.Contains(t, *(actualData.content), example.content)
+		newActualDoc := new(Docx)
+		newActualDoc.ReadFile(newFilePath)
+		assert.Contains(t, newActualDoc.GetContent(), example.content)
 		os.RemoveAll(exportTempDir)
 	}
 

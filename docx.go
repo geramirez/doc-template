@@ -9,25 +9,30 @@ import (
 // Docx struct that contains data from a docx
 type Docx struct {
 	zipReader *zip.ReadCloser
-	content   *string
+	content   string
 }
 
 // ReadDocxFile func reads a docx file
-func ReadDocxFile(path string) (*Docx, error) {
+func (d *Docx) ReadFile(path string) error {
 	reader, err := zip.OpenReader(path)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	content, err := readText(reader.File)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &Docx{zipReader: reader, content: &content}, nil
+	d.zipReader = reader
+	d.content = content
+	return nil
 }
 
-// Close closes a docx file
-func (d *Docx) Close() error {
-	return d.zipReader.Close()
+func (d *Docx) UpdateConent(newContent string) {
+	d.content = newContent
+}
+
+func (d *Docx) GetContent() string {
+	return d.content
 }
 
 // WriteToFile  writes the changes to a new file
@@ -45,6 +50,10 @@ func (d *Docx) WriteToFile(path string) error {
 	return nil
 }
 
+func (d *Docx) Close() error {
+	return d.zipReader.Close()
+}
+
 func (d *Docx) write(ioWriter io.Writer) error {
 	var err error
 	w := zip.NewWriter(ioWriter)
@@ -60,7 +69,7 @@ func (d *Docx) write(ioWriter io.Writer) error {
 			return err
 		}
 		if file.Name == "word/document.xml" {
-			writer.Write([]byte(*(d.content)))
+			writer.Write([]byte(d.content))
 		} else {
 			writer.Write(streamToByte(readCloser))
 		}
