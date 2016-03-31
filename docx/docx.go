@@ -1,4 +1,4 @@
-package main
+package docx
 
 import (
 	"archive/zip"
@@ -12,7 +12,7 @@ type Docx struct {
 	content   string
 }
 
-// ReadDocxFile func reads a docx file
+// ReadFile func reads a docx file
 func (d *Docx) ReadFile(path string) error {
 	reader, err := zip.OpenReader(path)
 	if err != nil {
@@ -27,15 +27,17 @@ func (d *Docx) ReadFile(path string) error {
 	return nil
 }
 
+// UpdateConent updates the content string
 func (d *Docx) UpdateConent(newContent string) {
 	d.content = newContent
 }
 
+// GetContent returns the string content
 func (d *Docx) GetContent() string {
 	return d.content
 }
 
-// WriteToFile  writes the changes to a new file
+// WriteToFile writes the changes to a new file
 func (d *Docx) WriteToFile(path string) error {
 	var target *os.File
 	target, err := os.Create(path)
@@ -50,6 +52,7 @@ func (d *Docx) WriteToFile(path string) error {
 	return nil
 }
 
+// Closes the document
 func (d *Docx) Close() error {
 	return d.zipReader.Close()
 }
