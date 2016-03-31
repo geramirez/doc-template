@@ -52,7 +52,7 @@ func (d *Docx) WriteToFile(path string) error {
 	return nil
 }
 
-// Closes the document
+// Close the document
 func (d *Docx) Close() error {
 	return d.zipReader.Close()
 }

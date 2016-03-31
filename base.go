@@ -20,8 +20,8 @@ type Document interface {
 // DocTemplate struct combines data and methods from both the Document interface
 // and golang's templating library
 type DocTemplate struct {
+	*template.Template
 	Document Document
-	Template *template.Template
 }
 
 // GetTemplate uses the file extension to determin the correct document struct to use
@@ -34,5 +34,5 @@ func GetTemplate(filePath string) (*DocTemplate, error) {
 		return nil, errors.New("Unsupported Document Type")
 	}
 	document.ReadFile(filePath)
-	return &DocTemplate{Document: document, Template: template.New("newTemplate")}, nil
+	return &DocTemplate{Document: document}, nil
 }
