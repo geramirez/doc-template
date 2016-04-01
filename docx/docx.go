@@ -3,6 +3,7 @@ package docx
 import (
 	"archive/zip"
 	"io"
+	"log"
 	"os"
 )
 
@@ -38,14 +39,14 @@ func (d *Docx) GetContent() string {
 }
 
 // WriteToFile writes the changes to a new file
-func (d *Docx) WriteToFile(path string) error {
+func (d *Docx) WriteToFile(path string, data string) error {
 	var target *os.File
 	target, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 	defer target.Close()
-	err = d.write(target)
+	err = d.write(target, data)
 	if err != nil {
 		return err
 	}
@@ -57,8 +58,9 @@ func (d *Docx) Close() error {
 	return d.zipReader.Close()
 }
 
-func (d *Docx) write(ioWriter io.Writer) error {
+func (d *Docx) write(ioWriter io.Writer, data string) error {
 	var err error
+	// Reformat string, for some reason the first char is converted to &lt;
 	w := zip.NewWriter(ioWriter)
 	for _, file := range d.zipReader.File {
 		var writer io.Writer
@@ -72,7 +74,8 @@ func (d *Docx) write(ioWriter io.Writer) error {
 			return err
 		}
 		if file.Name == "word/document.xml" {
-			writer.Write([]byte(d.content))
+			log.Println(data)
+			writer.Write([]byte(data))
 		} else {
 			writer.Write(streamToByte(readCloser))
 		}

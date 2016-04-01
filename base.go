@@ -1,9 +1,11 @@
-package main
+package docTemp
 
 import (
+	"bytes"
 	"errors"
-	"html/template"
 	"path/filepath"
+	"strings"
+	"text/template"
 
 	"github.com/geramirez/doc-template/docx"
 )
@@ -13,14 +15,14 @@ type Document interface {
 	ReadFile(string) error
 	UpdateConent(string)
 	GetContent() string
-	WriteToFile(string) error
+	WriteToFile(string, string) error
 	Close() error
 }
 
 // DocTemplate struct combines data and methods from both the Document interface
 // and golang's templating library
 type DocTemplate struct {
-	*template.Template
+	Template *template.Template
 	Document Document
 }
 
@@ -34,5 +36,34 @@ func GetTemplate(filePath string) (*DocTemplate, error) {
 		return nil, errors.New("Unsupported Document Type")
 	}
 	document.ReadFile(filePath)
-	return &DocTemplate{Document: document}, nil
+	return &DocTemplate{Document: document, Template: template.New("docTemp")}, nil
+}
+
+// Execute func runs the template and sends the output to the export path
+func (docTemplate *DocTemplate) Execute(exportPath string, data interface{}) error {
+	buf := new(bytes.Buffer)
+	err := docTemplate.Template.Execute(buf, data)
+	if err != nil {
+		return err
+	}
+	err = docTemplate.Document.WriteToFile(exportPath, buf.String())
+	return err
+}
+
+// AddFunctions adds functions to the template
+func (docTemplate *DocTemplate) AddFunctions(funcMap template.FuncMap) {
+	docTemplate.Template = docTemplate.Template.Funcs(funcMap)
+}
+
+// Parse parses the template
+func (docTemplate *DocTemplate) Parse() {
+	docTemplate.Template.Parse(docTemplate.Document.GetContent())
+}
+
+func main() {
+	funcMap := template.FuncMap{"title": strings.Title}
+	docTemp, _ := GetTemplate("docx/fixtures/test.docx")
+	docTemp.AddFunctions(funcMap)
+	docTemp.Parse()
+	docTemp.Execute("test.docx", nil)
 }
