@@ -46,7 +46,7 @@ func TestWriteToFile(t *testing.T) {
 		currentContent := actualDoc.GetContent()
 		actualDoc.UpdateConent(strings.Replace(currentContent, "This is a test document", example.content, -1))
 		newFilePath := filepath.Join(exportTempDir, "test.docx")
-		actualDoc.WriteToFile(newFilePath)
+		actualDoc.WriteToFile(newFilePath, actualDoc.GetContent())
 		// Check content
 		newActualDoc := new(Docx)
 		newActualDoc.ReadFile(newFilePath)

@@ -6,6 +6,8 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
+	"regexp"
+	"strings"
 )
 
 // readText reads text from a word document
@@ -51,4 +53,27 @@ func streamToByte(stream io.Reader) []byte {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(stream)
 	return buf.Bytes()
+}
+
+// normalize fixes quotation marks in documnet
+func normalizeQuotes(in rune) rune {
+	switch in {
+	case '“', '”':
+		return '"'
+	case '‘', '’':
+		return '\''
+	}
+	return in
+}
+
+// cleans template tagged text of all brakets
+func normalizeAll(text string) string {
+	brakets := regexp.MustCompile("<.*?>")
+	text = brakets.ReplaceAllString(text, "")
+	return strings.Map(normalizeQuotes, text)
+}
+
+func cleanText(text string) string {
+	braketFinder := regexp.MustCompile("{{.*?}}")
+	return braketFinder.ReplaceAllStringFunc(text, normalizeAll)
 }

@@ -3,7 +3,6 @@ package docx
 import (
 	"archive/zip"
 	"io"
-	"log"
 	"os"
 )
 
@@ -24,7 +23,7 @@ func (d *Docx) ReadFile(path string) error {
 		return err
 	}
 	d.zipReader = reader
-	d.content = content
+	d.content = cleanText(content)
 	return nil
 }
 
@@ -74,7 +73,6 @@ func (d *Docx) write(ioWriter io.Writer, data string) error {
 			return err
 		}
 		if file.Name == "word/document.xml" {
-			log.Println(data)
 			writer.Write([]byte(data))
 		} else {
 			writer.Write(streamToByte(readCloser))
