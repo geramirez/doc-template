@@ -2,6 +2,7 @@ package docx
 
 import (
 	"archive/zip"
+	"errors"
 	"io"
 	"log"
 	"os"
@@ -24,6 +25,9 @@ func (d *Docx) ReadFile(path string) error {
 		return err
 	}
 	d.zipReader = reader
+	if content == "" {
+		return errors.New("File has no content")
+	}
 	d.content = cleanText(content)
 	log.Printf("Read File `%s`", path)
 	return nil
