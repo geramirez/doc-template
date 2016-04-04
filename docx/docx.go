@@ -18,11 +18,11 @@ type Docx struct {
 func (d *Docx) ReadFile(path string) error {
 	reader, err := zip.OpenReader(path)
 	if err != nil {
-		return errors.New("Cannot open docx")
+		return errors.New("Cannot Open File")
 	}
 	content, err := readText(reader.File)
 	if err != nil {
-		return errors.New("Cannot read docx")
+		return errors.New("Cannot Read File")
 	}
 	d.zipReader = reader
 	if content == "" {
