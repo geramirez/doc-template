@@ -35,7 +35,10 @@ func GetTemplate(filePath string) (*DocTemplate, error) {
 	default:
 		return nil, errors.New("Unsupported Document Type")
 	}
-	document.ReadFile(filePath)
+	err := document.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
 	return &DocTemplate{Document: document, Template: template.New("docTemp")}, nil
 }
 
