@@ -3,6 +3,7 @@ package docTemp
 import (
 	"bytes"
 	"errors"
+	"log"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -44,6 +45,7 @@ func (docTemplate *DocTemplate) Execute(exportPath string, data interface{}) err
 	buf := new(bytes.Buffer)
 	err := docTemplate.Template.Execute(buf, data)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	err = docTemplate.Document.WriteToFile(exportPath, buf.String())
@@ -57,13 +59,10 @@ func (docTemplate *DocTemplate) AddFunctions(funcMap template.FuncMap) {
 
 // Parse parses the template
 func (docTemplate *DocTemplate) Parse() {
-	docTemplate.Template.Parse(docTemplate.Document.GetContent())
-}
-
-func main() {
-	funcMap := template.FuncMap{"title": strings.Title}
-	docTemp, _ := GetTemplate("docx/fixtures/test.docx")
-	docTemp.AddFunctions(funcMap)
-	docTemp.Parse()
-	docTemp.Execute("test.docx", nil)
+	temp, err := docTemplate.Template.Parse(docTemplate.Document.GetContent())
+	if err != nil {
+		log.Println(err)
+	} else {
+		docTemplate.Template = temp
+	}
 }

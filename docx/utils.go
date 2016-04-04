@@ -69,7 +69,9 @@ func normalizeQuotes(in rune) rune {
 // cleans template tagged text of all brakets
 func normalizeAll(text string) string {
 	brakets := regexp.MustCompile("<.*?>")
+	quotes := regexp.MustCompile("&quot;")
 	text = brakets.ReplaceAllString(text, "")
+	text = quotes.ReplaceAllString(text, "\"")
 	return strings.Map(normalizeQuotes, text)
 }
 

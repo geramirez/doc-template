@@ -3,6 +3,7 @@ package docx
 import (
 	"archive/zip"
 	"io"
+	"log"
 	"os"
 )
 
@@ -24,6 +25,7 @@ func (d *Docx) ReadFile(path string) error {
 	}
 	d.zipReader = reader
 	d.content = cleanText(content)
+	log.Printf("Read File `%s`", path)
 	return nil
 }
 
@@ -49,6 +51,7 @@ func (d *Docx) WriteToFile(path string, data string) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("Exporting data to %s", path)
 	return nil
 }
 
