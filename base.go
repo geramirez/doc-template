@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"path/filepath"
-	"strings"
 	"text/template"
 
 	"github.com/geramirez/doc-template/docx"
