@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/geramirez/doc-template/docx"
+	"github.com/opencontrol/doc-template/docx"
 )
 
 // Document interface is a combintation of methods use for generic data files
