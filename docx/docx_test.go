@@ -44,7 +44,7 @@ func TestWriteToFile(t *testing.T) {
 		actualDoc := new(Docx)
 		actualDoc.ReadFile(example.fixture)
 		currentContent := actualDoc.GetContent()
-		actualDoc.UpdateConent(strings.Replace(currentContent, "This is a test document", example.content, -1))
+		actualDoc.UpdateContent(strings.Replace(currentContent, "This is a test document", example.content, -1))
 		newFilePath := filepath.Join(exportTempDir, "test.docx")
 		actualDoc.WriteToFile(newFilePath, actualDoc.GetContent())
 		// Check content

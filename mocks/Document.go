@@ -20,8 +20,8 @@ func (_m *Document) ReadFile(_a0 string) error {
 	return r0
 }
 
-// UpdateConent provides a mock function with given fields: _a0
-func (_m *Document) UpdateConent(_a0 string) {
+// UpdateContent provides a mock function with given fields: _a0
+func (_m *Document) UpdateContent(_a0 string) {
 	_m.Called(_a0)
 }
 
