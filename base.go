@@ -13,7 +13,7 @@ import (
 // Document interface is a combintation of methods use for generic data files
 type Document interface {
 	ReadFile(string) error
-	UpdateConent(string)
+	UpdateContent(string)
 	GetContent() string
 	WriteToFile(string, string) error
 	Close() error
