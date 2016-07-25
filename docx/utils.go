@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
+	"hash/crc32"
 )
 
 // readText reads text from a word document
@@ -78,4 +79,8 @@ func normalizeAll(text string) string {
 func cleanText(text string) string {
 	braketFinder := regexp.MustCompile("{{.*?}}")
 	return braketFinder.ReplaceAllStringFunc(text, normalizeAll)
+}
+
+func calculateChecksum(data []byte) uint32 {
+	return crc32.ChecksumIEEE(data)
 }

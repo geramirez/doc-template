@@ -55,3 +55,48 @@ func TestWriteToFile(t *testing.T) {
 	}
 
 }
+
+
+type mediaDocxTest struct {
+	fixture string
+	image string
+	expected string
+}
+
+var mediaDocxTests = []mediaDocxTest {
+	{
+		fixture: filepath.Join("fixtures", "picture_fixtures", "empty.docx"),
+		image: filepath.Join("fixtures", "picture_fixtures", "oclogo.png"),
+	},
+}
+
+func TestUploadImage(t *testing.T){
+	for _, test := range mediaDocxTests {
+		exportTempDir, _ := ioutil.TempDir("", "exports")
+		actualDoc := new(Docx)
+		assert.Nil(t, actualDoc.ReadFile(test.fixture))
+		pic, err := actualDoc.UploadImage(test.image)
+		assert.Nil(t, err)
+		t.Log(actualDoc.GetContent())
+		actualDoc.UpdateContent(strings.Replace(actualDoc.GetContent(), "Image Placeholder", pic.GetRepresentation(), -1))
+		t.Log(actualDoc.GetContent())
+		exportTempDir = ""
+		newFilePath := filepath.Join(exportTempDir, "test.docx")
+		actualDoc.WriteToFile(newFilePath, actualDoc.GetContent())
+		actualDoc.Close()
+		// Check content
+		newActualDoc := new(Docx)
+		newActualDoc.ReadFile(newFilePath)
+		for _, file := range(newActualDoc.zipReader.File) {
+			t.Log(file.Name)
+			if file.Name == "word/media/image2.png" {
+				reader, _ := file.Open()
+				ioutil.WriteFile("image2.png", streamToByte(reader), 0644)
+			}
+		}
+		t.Log("Finished")
+		newActualDoc.Close()
+
+
+	}
+}
