@@ -75,11 +75,11 @@ func TestUploadImage(t *testing.T){
 		exportTempDir, _ := ioutil.TempDir("", "exports")
 		actualDoc := new(Docx)
 		assert.Nil(t, actualDoc.ReadFile(test.fixture))
-		pic, err := actualDoc.UploadImage(test.image)
+		_, err := actualDoc.UploadImage(test.image)
 		assert.Nil(t, err)
-		t.Log(actualDoc.GetContent())
-		actualDoc.UpdateContent(strings.Replace(actualDoc.GetContent(), "Image Placeholder", pic.GetRepresentation(), -1))
-		t.Log(actualDoc.GetContent())
+		//t.Log(actualDoc.GetContent())
+		actualDoc.UpdateContent(testDocumentContent)
+		//t.Log(actualDoc.GetContent())
 		exportTempDir = ""
 		newFilePath := filepath.Join(exportTempDir, "test.docx")
 		actualDoc.WriteToFile(newFilePath, actualDoc.GetContent())
@@ -88,13 +88,15 @@ func TestUploadImage(t *testing.T){
 		newActualDoc := new(Docx)
 		newActualDoc.ReadFile(newFilePath)
 		for _, file := range(newActualDoc.zipReader.File) {
-			t.Log(file.Name)
-			if file.Name == "word/media/image2.png" {
+			// t.Log(file.Name)
+			if file.Name == "word/media/image1.png" {
 				reader, _ := file.Open()
-				ioutil.WriteFile("image2.png", streamToByte(reader), 0644)
+				ioutil.WriteFile("image1.png", streamToByte(reader), 0644)
 			}
 		}
-		t.Log("Finished")
+		//t.Log("Finished")
+		assert.Equal(t, newActualDoc.GetContent(), actualDoc.GetContent())
+		os.RemoveAll(exportTempDir)
 		newActualDoc.Close()
 
 
