@@ -26,7 +26,7 @@ type DocTemplate struct {
 	Document Document
 }
 
-// GetTemplate uses the file extension to determin the correct document struct to use
+// GetTemplate uses the file extension to determine the correct document struct to use
 func GetTemplate(filePath string) (*DocTemplate, error) {
 	var document Document
 	switch filepath.Ext(filePath) {
