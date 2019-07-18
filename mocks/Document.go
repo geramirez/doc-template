@@ -2,6 +2,7 @@ package mocks
 
 import "github.com/stretchr/testify/mock"
 
+// Document struct contains the mock methods for testing
 type Document struct {
 	mock.Mock
 }
